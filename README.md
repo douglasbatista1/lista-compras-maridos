@@ -45,7 +45,10 @@ Sem essas duas variáveis, o app roda em **modo demonstração**. **Nunca** colo
    - CLI: `npx supabase login`, depois `npx supabase link --project-ref <ref>`, depois `npx supabase db push`
    - ou cole no SQL Editor os arquivos de `supabase/migrations/`, em ordem.
 3. **Authentication → Providers → Email**: deixe ligado, com "Confirm email" ativo. Em *Password*, mínimo de 8 caracteres.
-4. **Authentication → URL Configuration → Redirect URLs**: adicione `listacompras://**`. Se for usar a versão web, adicione também o domínio dela (`https://seu-dominio/**`). Para testar no Expo Go, adicione `exp://**`.
+4. **Authentication → URL Configuration**:
+   - **Site URL:** `https://lista-compras-maridos.vercel.app`
+   - **Redirect URLs:** `https://lista-compras-maridos.vercel.app/**`, `listacompras://**` (app instalado), `exp://**` (Expo Go) e `http://localhost:8081/**` (web local).
+   - Os links de confirmação de cadastro, convite e "esqueci minha senha" só voltam para endereços dessa lista.
 5. **E-mail de verdade (obrigatório para convites):** em *Authentication → Emails → SMTP Settings*, configure um provedor (Resend, Brevo, Amazon SES…) com o seu domínio verificado (SPF/DKIM). O servidor de e-mail padrão do Supabase só serve para teste, porque envia poucos e-mails por hora.
 6. **Templates de e-mail** (*Authentication → Emails → Templates*):
    - **Invite user**: cole `supabase/templates/invite.html`. Assunto sugerido: `{{ .Data.invited_by_name }} convidou você para a lista da família`.

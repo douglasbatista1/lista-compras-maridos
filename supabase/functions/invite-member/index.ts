@@ -10,7 +10,9 @@
 // Resposta: { code, emailSent: boolean, reason?: 'already_registered' }
 //
 // Deploy: npx supabase functions deploy invite-member
-// Segredos: npx supabase secrets set INVITE_REDIRECT_URL=listacompras://convite
+// Link do e-mail: por padrão o site (https://lista-compras-maridos.vercel.app/convite), que abre
+// em qualquer aparelho. Quando o app estiver nas lojas, troque pelo segredo
+// INVITE_REDIRECT_URL=listacompras://convite (precisa estar nas Redirect URLs do Supabase).
 import { createClient } from '@supabase/supabase-js';
 
 const cors = {
@@ -37,7 +39,7 @@ Deno.serve(async (req) => {
   const url = Deno.env.get('SUPABASE_URL')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const redirectBase = Deno.env.get('INVITE_REDIRECT_URL') ?? 'listacompras://convite';
+  const redirectBase = Deno.env.get('INVITE_REDIRECT_URL') ?? 'https://lista-compras-maridos.vercel.app/convite';
 
   // cliente com o JWT de quem chamou: o banco aplica RLS e as regras do convite
   const asUser = createClient(url, anonKey, {
