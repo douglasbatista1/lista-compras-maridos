@@ -1,0 +1,8 @@
+# Não enviar à Vercel: dados brutos, fotos compactadas da importação e segredos
+node_modules
+Banco de produtos
+kit_marca_lista_de_compras
+scripts/catalog/out
+dist
+.env*
+!.env.example

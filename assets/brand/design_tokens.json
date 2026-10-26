@@ -1,0 +1,73 @@
+{
+  "brand": "Lista de Compras para Maridos",
+  "version": "1.0",
+  "tagline": "A lista certa. O produto certo. Sem complicação.",
+  "short_tagline": "Compras sem dúvidas.",
+  "colors": {
+    "forest": "#203832",
+    "sage": "#DDE6DC",
+    "ink": "#151715",
+    "ivory": "#F7F5F0",
+    "white": "#FFFFFF",
+    "warmgray": "#E9E6DF",
+    "muted": "#747771",
+    "line": "#D9D7D0",
+    "softgreen": "#EEF2EC",
+    "success": "#2B6647",
+    "warning": "#B57634",
+    "error": "#B84A42"
+  },
+  "typography": {
+    "family": "Inter",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "screenTitle": "24-28px",
+    "body": "15-16px",
+    "metadata": "12-13px"
+  },
+  "spacing_px": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radii_px": {
+    "card": "12-16",
+    "primary_button": "14-18",
+    "chip": "999"
+  },
+  "components": {
+    "productImage": {
+      "ratio": "1:1",
+      "fit": "contain",
+      "background": "sage or ivory"
+    },
+    "primaryButton": {
+      "height": "48-52px",
+      "background": "forest",
+      "text": "white"
+    },
+    "productCard": {
+      "surface": "white",
+      "border": "warmgray",
+      "radius": "14px"
+    },
+    "progress": {
+      "track": "warmgray",
+      "fill": "forest"
+    }
+  },
+  "principles": [
+    "product certainty before decoration",
+    "generous whitespace",
+    "one primary action per screen",
+    "color is never the only state signal",
+    "clearly distinguish demo from integrations"
+  ]
+}

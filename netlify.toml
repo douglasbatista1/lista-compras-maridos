@@ -1,0 +1,7 @@
+# Opcional: demonstração web. Não é necessário para os apps Android/iOS (EAS).
+[build]
+  command = "npx expo export --platform web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

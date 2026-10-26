@@ -1,0 +1,51 @@
+# dependências
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Nativo (gerado pelo Expo Prebuild / EAS)
+/ios
+/android
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# Metro
+.metro-health-check*
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+
+# Segredos e variáveis locais — nunca versionar
+.env
+.env.*
+!.env.example
+credentials.json
+google-service-account*.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Dados brutos do catálogo (≈530 MB de fotos de terceiros; licença não verificada)
+/Banco de produtos/imagens/
+/Banco de produtos/produtos.json
+/Banco de produtos/produtos.csv
+# Saídas da importação
+/scripts/catalog/out/
+
+# Editor
+.vscode/settings.json

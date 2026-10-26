@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="360" viewBox="0 0 1400 360">
+<g transform="translate(18 18) scale(0.63)">
+<rect width="512" height="512" rx="108" fill="#203832"/>
+<path d="M184 218v-52c0-43 32-74 72-74s72 31 72 74v52" fill="none" stroke="#F7F5F0" stroke-width="25" stroke-linecap="round"/>
+<rect x="137" y="199" width="238" height="235" rx="34" fill="#F7F5F0"/>
+<path d="M190 315l48 47 94-105" fill="none" stroke="#203832" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<text x="365" y="145" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="700" letter-spacing="-2" fill="#151715">Lista de Compras</text>
+<text x="368" y="218" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="500" letter-spacing="-1.4" fill="#151715">para Maridos</text>
+<text x="370" y="278" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="500" letter-spacing="4.5" fill="#747771">A LISTA CERTA. O PRODUTO CERTO.</text>
+</svg>

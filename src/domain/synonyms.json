@@ -1,0 +1,20 @@
+{
+  "_comment": "Sinônimos de busca (termo digitado -> termos do catálogo), já normalizados. Mantenha igual à migração 20261022000300_search_synonyms.sql (há teste).",
+  "terms": {
+    "detergente": ["lava loucas"],
+    "sabao": ["lava roupas"],
+    "bolacha": ["biscoito"],
+    "biscoito": ["bolacha"],
+    "macaxeira": ["mandioca", "aipim"],
+    "mandioca": ["aipim"],
+    "aipim": ["mandioca"],
+    "xampu": ["shampoo"],
+    "desodorante": ["antitranspirante"],
+    "catchup": ["ketchup"],
+    "dente": ["dental"],
+    "yogurt": ["iogurte"],
+    "iogurte": ["yogurt"],
+    "sanitaria": ["alvejante"],
+    "salgadinho": ["snack"]
+  }
+}
