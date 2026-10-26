@@ -128,7 +128,7 @@ export default function FamilyScreen() {
       <Card>
         <Image
           source={require('../../../assets/brand/logo_horizontal.png')}
-          style={{ width: '100%', aspectRatio: 1400 / 360 }}
+          style={{ width: '100%', height: 80 }}
           contentFit="contain"
           accessibilityLabel={`Lista de Compras para Maridos. ${tagline}`}
         />

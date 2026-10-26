@@ -111,7 +111,7 @@ export default function SignInScreen() {
     <Screen scroll>
       <Image
         source={require('../../assets/brand/logo_horizontal.png')}
-        style={{ width: '100%', aspectRatio: 1400 / 360, marginVertical: space.xl }}
+        style={{ width: '100%', height: 88, marginVertical: space.xl }}
         contentFit="contain"
         accessibilityLabel="Lista de Compras para Maridos"
       />
