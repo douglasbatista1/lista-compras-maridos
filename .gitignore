@@ -49,3 +49,5 @@ google-service-account*.json
 
 # Editor
 .vscode/settings.json
+.vercel
+.env*
