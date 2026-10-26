@@ -102,7 +102,13 @@ eas submit --platform android  # / ios — envio às lojas
 - **Android**: conta Google Play Console (taxa única), app criado no console, chave de serviço para `eas submit`; o primeiro envio costuma ser manual;
 - metadados, capturas de tela, política de privacidade (URL) e o questionário de segurança de dados das lojas.
 
-## Web (opcional, só para demonstração)
+## Web (Vercel)
+O projeto `lista-compras-maridos` na Vercel está ligado a este repositório: cada push na `main` publica sozinho.
+- Configuração em `vercel.json` (build `npx expo export --platform web`, saída `dist`, todas as rotas para o `index.html`).
+- Variáveis na Vercel: `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (as duas são públicas).
+- **Autor dos commits:** a Vercel bloqueia a publicação se o e-mail do autor do commit não for de uma conta do GitHub. Neste repositório, o e-mail configurado é o automático do GitHub (`…@users.noreply.github.com`).
+
+## Web (alternativa: Netlify)
 `npm run export:web` gera a SPA em `dist/` (`web.output: "single"` com `public/_redirects`). O `netlify.toml` está pronto: conecte o repositório no Netlify ou use `npx netlify deploy --dir dist`. Nada foi publicado.
 
 ## Custos e limites a monitorar
