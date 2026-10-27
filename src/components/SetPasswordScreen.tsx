@@ -5,12 +5,14 @@ import { ActivityIndicator, Platform, View } from 'react-native';
 
 import { useData } from '@/data/DataProvider';
 import { getSupabase } from '@/data/supabase/client';
-import { authErrorMessage, parseAuthRedirect, passwordProblem } from '@/domain/auth';
+import { authErrorMessage, linkErrorMessage, parseAuthRedirect, passwordProblem } from '@/domain/auth';
 import { colors, space } from '@/theme/tokens';
 
 import { AppText, Field, Notice, PrimaryButton, Screen, ScreenTitle, SecondaryButton } from './ui';
 
 type Status = 'checking' | 'ready' | 'invalid';
+/** Link novo (?token_hash=...): a sessão só é criada no envio do formulário. */
+type PendingToken = { tokenHash: string; type: 'invite' | 'recovery' };
 
 /**
  * Destino dos links enviados por e-mail:
@@ -25,6 +27,7 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
   const [status, setStatus] = useState<Status>('checking');
   const [linkError, setLinkError] = useState<string | null>(null);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [pending, setPending] = useState<PendingToken | null>(null);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -37,11 +40,21 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
     (async () => {
       const url = Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.href : linkingUrl;
       const link = parseAuthRedirect(url);
+      const code = link.inviteCode ?? (typeof params.code === 'string' && /^[A-Za-z0-9]{8}$/.test(params.code) ? params.code.toUpperCase() : null);
       if (link.error) {
         if (alive) {
-          setLinkError(link.error);
+          setInviteCode(code);
+          setLinkError(linkErrorMessage(link.error));
           setStatus('invalid');
         }
+        return;
+      }
+      if (link.tokenHash) {
+        // Não troca o token agora: abrir o link não pode gastá-lo (ver PendingToken).
+        if (!alive) return;
+        setPending({ tokenHash: link.tokenHash, type: kind });
+        setInviteCode(code);
+        setStatus('ready');
         return;
       }
       if (link.accessToken && link.refreshToken) {
@@ -49,7 +62,6 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
       }
       const { data } = await sb.auth.getUser();
       if (!alive) return;
-      const code = link.inviteCode ?? (typeof params.code === 'string' && /^[A-Za-z0-9]{8}$/.test(params.code) ? params.code.toUpperCase() : null);
       // Aberto sem link de e-mail (sem sessão nova e sem código de convite): não é um convite.
       // Vai para o início, que leva ao login, à família ou às listas conforme o caso.
       if (!link.accessToken && !(kind === 'invite' && code)) {
@@ -72,6 +84,17 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
     setBusy(true);
     setError(null);
     try {
+      if (pending) {
+        const { error: verifyError } = await sb.auth.verifyOtp({ token_hash: pending.tokenHash, type: pending.type });
+        if (verifyError) {
+          setLinkError(authErrorMessage(verifyError));
+          setStatus('invalid');
+          setBusy(false);
+          return;
+        }
+        // token gasto: se algo abaixo falhar, o próximo toque já usa a sessão criada
+        setPending(null);
+      }
       const { data: updated, error: e } = await sb.auth.updateUser({
         password,
         data: kind === 'invite' && name.trim() ? { display_name: name.trim() } : undefined,
@@ -117,7 +140,7 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
         <Notice tone="error">
           {linkError ?? 'Este link não é mais válido.'}{' '}
           {kind === 'invite'
-            ? 'Peça para quem convidou tocar em "Reenviar" na aba Família.'
+            ? `Peça para quem convidou tocar em "Reenviar" na aba Família. Se você já criou sua conta, entre pelo login${inviteCode ? ` e digite o código ${inviteCode}` : ''}.`
             : 'Peça um novo link em "Esqueci minha senha".'}
         </Notice>
         <SecondaryButton label="Ir para o login" onPress={() => router.replace('/entrar')} />

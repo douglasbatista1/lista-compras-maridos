@@ -1,5 +1,8 @@
 <!-- Supabase → Authentication → Email Templates → "Invite user". Assunto sugerido:
-     {{ .Data.invited_by_name }} convidou você para a lista de compras da família -->
+     {{ .Data.invited_by_name }} convidou você para a lista de compras da família
+     O botão abre o site/app com ?token_hash=... (e não o {{ .ConfirmationURL }} do Supabase):
+     o token só é gasto quando a pessoa cria a senha, então prévias de link, antivírus do
+     e-mail ou abrir duas vezes não fazem o convite "expirar". {{ .RedirectTo }} já traz ?code=. -->
 <div style="font-family: Inter, Arial, sans-serif; background:#F7F5F0; padding:32px 16px; color:#151715;">
   <div style="max-width:480px; margin:0 auto; background:#FFFFFF; border:1px solid #E9E6DF; border-radius:16px; padding:28px;">
     <p style="margin:0 0 4px; font-size:12px; letter-spacing:1.2px; color:#203832; font-weight:600;">LISTA DE COMPRAS PARA MARIDOS</p>
@@ -9,13 +12,13 @@
       <strong>{{ .Data.family_name }}</strong> e ver as mesmas listas de compras.
     </p>
     <p style="margin:0 0 24px; font-size:16px; line-height:22px;">Toque no botão para criar sua senha e entrar:</p>
-    <a href="{{ .ConfirmationURL }}"
+    <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite"
        style="display:inline-block; background:#203832; color:#FFFFFF; text-decoration:none; font-weight:600; font-size:16px; padding:14px 24px; border-radius:16px;">
       Aceitar convite
     </a>
     <p style="margin:24px 0 0; font-size:13px; line-height:18px; color:#747771;">
       Se o botão não abrir o app, instale o Lista de Compras para Maridos e toque no link de novo.
-      Se você não esperava este convite, ignore este e-mail. O convite vale por 7 dias.
+      Se você não esperava este convite, ignore este e-mail. O botão vale por 24 horas; depois disso, peça um novo envio.
     </p>
   </div>
 </div>

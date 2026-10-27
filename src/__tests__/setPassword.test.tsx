@@ -15,6 +15,7 @@ const mockProfileEq = jest.fn(async () => ({ error: null }));
 const mockSb = {
   auth: {
     setSession: jest.fn(async () => ({ error: null })),
+    verifyOtp: jest.fn(async (_: unknown) => ({ data: {}, error: null as null | { code: string; message: string } })),
     getUser: jest.fn(async () => ({ data: { user: { id: 'u-new', user_metadata: { display_name: 'João', invite_code: 'K7M2Q9XA' } } } })),
     updateUser: jest.fn(async () => ({ data: { user: { id: 'u-new' } }, error: null })),
   },
@@ -49,6 +50,35 @@ it('convidado abre o link, cria a senha e entra na família', async () => {
   expect(mockSb.rpc).toHaveBeenCalledWith('accept_family_invite', { p_code: 'K7M2Q9XA' });
   expect(mockReload).toHaveBeenCalled();
   expect(mockReplace).toHaveBeenCalledWith('/');
+});
+
+it('link novo (token_hash): abrir não gasta o convite; o token só é usado ao criar a senha', async () => {
+  mockUrl = 'https://lista.exemplo/convite?code=K7M2Q9XA&token_hash=hash123&type=invite';
+  await render(<SetPasswordScreen kind="invite" />);
+  expect(await screen.findByText('Bem-vindo(a)!')).toBeTruthy();
+  expect(mockSb.auth.verifyOtp).not.toHaveBeenCalled();
+  expect(mockSb.auth.setSession).not.toHaveBeenCalled();
+
+  await fireEvent.changeText(screen.getByLabelText('Seu nome'), 'Ana');
+  await fireEvent.changeText(screen.getByLabelText('Senha (mínimo 8, com letras e números)'), 'senhaBoa123');
+  await fireEvent.changeText(screen.getByLabelText('Confirme a senha'), 'senhaBoa123');
+  await fireEvent.press(screen.getByRole('button', { name: 'Criar senha e entrar' }));
+  expect(mockSb.auth.verifyOtp).toHaveBeenCalledWith({ token_hash: 'hash123', type: 'invite' });
+  expect(mockSb.auth.updateUser).toHaveBeenCalledWith({ password: 'senhaBoa123', data: { display_name: 'Ana' } });
+  expect(mockSb.rpc).toHaveBeenCalledWith('accept_family_invite', { p_code: 'K7M2Q9XA' });
+  expect(mockReplace).toHaveBeenCalledWith('/');
+});
+
+it('link novo já usado: explica e mostra o código para entrar pelo login', async () => {
+  mockUrl = 'https://lista.exemplo/convite?code=K7M2Q9XA&token_hash=usado&type=invite';
+  mockSb.auth.verifyOtp.mockResolvedValueOnce({ data: {}, error: { code: 'otp_expired', message: 'Token has expired or is invalid' } });
+  await render(<SetPasswordScreen kind="invite" />);
+  await fireEvent.changeText(await screen.findByLabelText('Senha (mínimo 8, com letras e números)'), 'senhaBoa123');
+  await fireEvent.changeText(screen.getByLabelText('Confirme a senha'), 'senhaBoa123');
+  await fireEvent.press(screen.getByRole('button', { name: 'Criar senha e entrar' }));
+  expect(await screen.findByText('Link expirado')).toBeTruthy();
+  expect(screen.getByText(/já foi usado ou expirou.*código K7M2Q9XA/)).toBeTruthy();
+  expect(mockSb.auth.updateUser).not.toHaveBeenCalled();
 });
 
 it('link expirado mostra como pedir outro', async () => {

@@ -27,6 +27,11 @@ export type AuthRedirect = {
   type: string | null;
   /** Código do convite da família (?code=XXXXXXXX). */
   inviteCode: string | null;
+  /**
+   * Token do link (?token_hash=...). Só é trocado por uma sessão quando a pessoa toca no botão:
+   * programas de e-mail que abrem o link antes (prévia, antivírus, navegador interno) não o gastam.
+   */
+  tokenHash: string | null;
   error: string | null;
 };
 
@@ -35,7 +40,7 @@ export type AuthRedirect = {
  * listacompras://convite?code=K7M2Q9XA#access_token=...&refresh_token=...&type=invite
  */
 export function parseAuthRedirect(url: string | null | undefined): AuthRedirect {
-  const empty: AuthRedirect = { accessToken: null, refreshToken: null, type: null, inviteCode: null, error: null };
+  const empty: AuthRedirect = { accessToken: null, refreshToken: null, type: null, inviteCode: null, tokenHash: null, error: null };
   if (!url) return empty;
   const hashIdx = url.indexOf('#');
   const qIdx = url.indexOf('?');
@@ -51,8 +56,15 @@ export function parseAuthRedirect(url: string | null | undefined): AuthRedirect 
     type: get('type'),
     // convites usam 8 caracteres; códigos PKCE do Supabase são longos e ficam de fora
     inviteCode: code && /^[A-Za-z0-9]{8}$/.test(code) ? code.toUpperCase() : null,
+    tokenHash: get('token_hash'),
     error: get('error_description') ?? get('error'),
   };
+}
+
+/** Erro de link de e-mail (vem em inglês do Supabase) em português. */
+export function linkErrorMessage(error: string | null | undefined): string {
+  if (!error || /expired|invalid|not found|access_denied/i.test(error)) return 'Este link já foi usado ou expirou.';
+  return error;
 }
 
 /** Traduz os erros mais comuns do Supabase Auth. */
@@ -64,6 +76,7 @@ export function authErrorMessage(error: { message?: string; code?: string } | nu
   if (code === 'user_already_exists' || /already registered/i.test(msg)) return 'Já existe uma conta com este e-mail. Use "Entrar".';
   if (code === 'weak_password') return 'Senha fraca. Use pelo menos 8 caracteres com letras e números.';
   if (code === 'over_email_send_rate_limit' || /rate limit/i.test(msg)) return 'Muitos e-mails enviados. Aguarde alguns minutos e tente de novo.';
+  if (code === 'otp_expired' || /token has expired|invalid or has expired|token not found/i.test(msg)) return linkErrorMessage(msg);
   return msg || 'Não foi possível concluir. Tente de novo.';
 }
 

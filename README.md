@@ -53,7 +53,8 @@ Sem essas duas variáveis, o app roda em **modo demonstração**. **Nunca** colo
    - Os links de confirmação de cadastro, convite e "esqueci minha senha" só voltam para endereços dessa lista.
 5. **E-mail de verdade (obrigatório para convites):** em *Authentication → Emails → SMTP Settings*, configure um provedor (Resend, Brevo, Amazon SES…) com o seu domínio verificado (SPF/DKIM). O servidor de e-mail padrão do Supabase só serve para teste, porque envia poucos e-mails por hora.
 6. **Templates de e-mail** (*Authentication → Emails → Templates*):
-   - **Invite user**: cole `supabase/templates/invite.html`. Assunto sugerido: `{{ .Data.invited_by_name }} convidou você para a lista da família`.
+   - **Invite user**: cole `supabase/templates/invite.html`. Assunto sugerido: `{{ .Data.invited_by_name }} convidou você para a lista da família`. O botão leva direto ao site com `token_hash`, e o token só é gasto quando a pessoa cria a senha. Com o `{{ .ConfirmationURL }}` padrão, o primeiro acesso ao link (prévia do e-mail, antivírus, navegador interno do app de e-mail) já gasta o convite, e a pessoa vê "link expirado".
+   - Em *Authentication → Providers → Email*, deixe **Email OTP Expiration** em `86400` (24 h, o máximo). O padrão é 1 hora, e o e-mail diz que o botão vale 24 horas.
    - **Magic Link**: inclua `{{ .Token }}`, para a opção "Entrar com código".
 7. **Database → Publications**: confirme que `shopping_lists` e `shopping_list_items` estão em `supabase_realtime` (a migração adiciona as duas).
 8. **Edge Function de convite**:
