@@ -24,6 +24,7 @@ const routes = {
   'historico/[id]': require('@/app/historico/[id]').default,
   entrar: require('@/app/entrar').default,
   cadastro: require('@/app/cadastro').default,
+  privacidade: require('@/app/privacidade').default,
   'familia-inicial': require('@/app/familia-inicial').default,
 };
 
@@ -139,5 +140,14 @@ it.each(['/entrar', '/cadastro'])('quem já está dentro e abre %s vai direto pa
   await renderRouter(routes, { initialUrl: url });
   expect(await screen.findByRole('button', { name: 'Nova lista' })).toBeTruthy();
   expect(screen.queryByText('Criar conta')).toBeNull();
+  await act(async () => {});
+});
+
+it('a Política de Privacidade abre sem ser redirecionada e é acessível pela aba Família', async () => {
+  await renderRouter(routes, { initialUrl: '/privacidade' });
+  expect(await screen.findByText('Seus direitos')).toBeTruthy();
+  expect(screen.getByText(/Supabase — banco de dados/)).toBeTruthy();
+  await act(async () => router.navigate('/familia'));
+  expect(await screen.findByText('Política de Privacidade')).toBeTruthy();
   await act(async () => {});
 });

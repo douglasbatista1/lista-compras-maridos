@@ -90,13 +90,18 @@ function Gate() {
         {/* links de e-mail: abrem em qualquer estado (com ou sem login) */}
         <Stack.Screen name="convite" options={{ headerShown: false }} />
         <Stack.Screen name="redefinir-senha" options={{ headerShown: false }} />
+        {/* páginas públicas (exigidas pelas lojas) */}
+        <Stack.Screen name="privacidade" options={{ title: 'Política de Privacidade' }} />
       </Stack>
     </>
   );
 }
 
-/** Telas abertas por link de e-mail: elas mesmas decidem para onde ir depois. */
-const EMAIL_LINK_ROUTES = new Set(['convite', 'redefinir-senha']);
+/**
+ * Telas que o direcionamento não mexe: links de e-mail (decidem sozinhas para onde ir)
+ * e páginas públicas, que abrem com ou sem login.
+ */
+const FREE_ROUTES = new Set(['convite', 'redefinir-senha', 'privacidade']);
 
 /**
  * Direcionamento explícito pelo estado da sessão, para nunca cair numa tela "sobrando"
@@ -107,7 +112,7 @@ function RouteGuard({ status }: { status: 'ready' | 'needs-auth' | 'needs-family
   const segments = useSegments();
   const first: string = segments[0] ?? '';
   useEffect(() => {
-    if (EMAIL_LINK_ROUTES.has(first)) return;
+    if (FREE_ROUTES.has(first)) return;
     if (status === 'needs-auth' && first !== 'entrar' && first !== 'cadastro') router.replace('/entrar');
     else if (status === 'needs-family' && first !== 'familia-inicial') router.replace('/familia-inicial');
     else if (status === 'ready' && (first === 'entrar' || first === 'cadastro' || first === 'familia-inicial')) router.replace('/');

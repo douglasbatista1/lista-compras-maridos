@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { Link } from 'expo-router';
 import { Bell, LogOut, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
@@ -140,6 +141,11 @@ export default function FamilyScreen() {
         <AppText variant="meta" style={{ marginTop: space.sm }}>
           O app não usa sua localização.
         </AppText>
+        <Link href="/privacidade" style={{ marginTop: space.md, paddingVertical: space.xs }}>
+          <AppText variant="metaStrong" style={{ textDecorationLine: 'underline' }}>
+            Política de Privacidade
+          </AppText>
+        </Link>
       </Card>
     </Screen>
   );

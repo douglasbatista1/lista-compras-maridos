@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
+import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
@@ -241,6 +242,11 @@ export function AuthScreen({ initialMode = 'entrar' }: { initialMode?: 'entrar' 
           />
         </>
       ) : null}
+      <Link href="/privacidade" style={{ marginTop: space.xl, alignSelf: 'center', paddingVertical: space.sm }}>
+        <AppText variant="meta" style={{ textDecorationLine: 'underline' }}>
+          Política de Privacidade
+        </AppText>
+      </Link>
     </Screen>
   );
 }
