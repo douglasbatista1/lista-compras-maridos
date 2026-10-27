@@ -1,10 +1,10 @@
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import { BadgeCheck, Bell, LogOut, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 import { FamilyPeople } from '@/components/FamilyPeople';
+import { BadgeCheck, Bell, LogOut, UserPlus, Users } from '@/components/icons';
 import { AppText, Card, Field, Screen, ScreenTitle, SecondaryButton, SectionTitle } from '@/components/ui';
 import { useData, useQuery, useRepo } from '@/data/DataProvider';
 import { SupabaseRepository } from '@/data/supabase/supabaseRepository';

@@ -7,7 +7,7 @@ import { env } from '@/config/env';
 import type { Clock } from '@/domain/lists';
 import type { Family } from '@/domain/types';
 
-import { getBundledCatalog } from './catalog/localCatalog';
+import { loadBundledCatalog } from './catalog/loadBundledCatalog';
 import { LocalRepository } from './local/localRepository';
 import type { DataRepository } from './repository';
 import { getSupabase } from './supabase/client';
@@ -42,7 +42,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const reloadSession = useCallback(async () => {
     const sb = getSupabase();
     if (!sb) {
-      const repo = new LocalRepository(AsyncStorage, getBundledCatalog(), appClock);
+      const repo = new LocalRepository(AsyncStorage, await loadBundledCatalog(), appClock);
       const family = await repo.getFamily();
       setState({ status: 'ready', repo, family });
       return;

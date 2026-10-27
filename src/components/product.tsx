@@ -1,4 +1,3 @@
-import { ChevronRight, Plus, Trash } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -7,6 +6,7 @@ import { productSubtitle } from '@/domain/search';
 import type { AnyProduct, ShoppingList, ShoppingListItem } from '@/domain/types';
 import { colors, fonts, radii, space } from '@/theme/tokens';
 
+import { ChevronRight, Plus, Trash } from './icons';
 import { AppText, Card, CheckState, IconButton, ProductImage, ProgressIndicator, QuantityStepper, formatQty } from './ui';
 
 /**

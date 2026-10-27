@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import { Check, PackagePlus, Search } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -7,6 +6,7 @@ import { useData, useRepo } from '@/data/DataProvider';
 import type { AnyProduct, ShoppingList } from '@/domain/types';
 import { colors, fonts, radii, space } from '@/theme/tokens';
 
+import { Check, PackagePlus, Search } from './icons';
 import { ProductCard } from './product';
 import { AppText, CategoryChips, EmptyState, Notice, SearchInput, SecondaryButton, formatQty } from './ui';
 

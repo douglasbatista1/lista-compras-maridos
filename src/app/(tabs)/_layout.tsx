@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
-import { Clock, ListChecks, Search, Users } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Clock, ListChecks, Search, Users } from '@/components/icons';
 import { colors, fonts } from '@/theme/tokens';
 
 /**

@@ -1,4 +1,3 @@
-import { Mail, RefreshCw, Trash, UserMinus, UserPlus, Users, X } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -9,6 +8,7 @@ import type { FamilyMember } from '@/domain/types';
 import { colors, fonts, radii, space } from '@/theme/tokens';
 
 import { ActionSheet, type SheetAction } from './ActionSheet';
+import { Mail, RefreshCw, Trash, UserMinus, UserPlus, Users, X } from './icons';
 import { AppText, Card, Field, Notice, PrimaryButton, SectionTitle } from './ui';
 
 /**

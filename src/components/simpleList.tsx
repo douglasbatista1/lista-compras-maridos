@@ -1,10 +1,10 @@
-import { Plus, Trash } from 'lucide-react-native';
 import { useRef, useState, type ComponentRef } from 'react';
 import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import type { ShoppingListItem } from '@/domain/types';
 import { colors, fonts, radii, space } from '@/theme/tokens';
 
+import { Plus, Trash } from './icons';
 import { CheckState, IconButton, QuantityStepper, formatQty } from './ui';
 
 /**

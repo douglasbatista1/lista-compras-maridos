@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
-import { NotebookPen, ShoppingBag } from 'lucide-react-native';
 import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { NotebookPen, ShoppingBag } from '@/components/icons';
 import { AppText, Field, Notice, PrimaryButton, Screen } from '@/components/ui';
 import { useData, useRepo } from '@/data/DataProvider';
 import type { ListKind } from '@/domain/types';

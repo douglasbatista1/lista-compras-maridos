@@ -1,8 +1,8 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { CheckCheck, Pencil, Plus, Send } from 'lucide-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 
+import { CheckCheck, Pencil, Plus, Send } from '@/components/icons';
 import { ShoppingListItemRow } from '@/components/product';
 import { SimpleItemInput, SimpleListItemRow } from '@/components/simpleList';
 import { AppText, Card, EmptyState, Field, Notice, PrimaryButton, ProgressIndicator, Screen, SecondaryButton } from '@/components/ui';

@@ -1,8 +1,8 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Repeat } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
 
+import { Repeat } from '@/components/icons';
 import { AppText, Notice, PrimaryButton, ProductImage, Screen, formatQty } from '@/components/ui';
 import { useData, useQuery, useRepo } from '@/data/DataProvider';
 import { formatDate, formatDateTime } from '@/domain/format';

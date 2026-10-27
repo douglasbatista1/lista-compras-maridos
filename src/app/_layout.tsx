@@ -9,7 +9,7 @@ import { Stack, router, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppText, Notice, PrimaryButton, Screen } from '@/components/ui';
@@ -25,7 +25,9 @@ export default function RootLayout() {
     if (loaded || fontError) SplashScreen.hideAsync().catch(() => {});
   }, [loaded, fontError]);
 
-  if (!loaded && !fontError) return null;
+  // No site, não esperamos as fontes (~1,4 MB) para mostrar a tela: o texto aparece na fonte
+  // do sistema e troca para a Inter assim que ela chega. No app, as fontes vêm no pacote.
+  if (!loaded && !fontError && Platform.OS !== 'web') return null;
 
   return (
     <SafeAreaProvider>

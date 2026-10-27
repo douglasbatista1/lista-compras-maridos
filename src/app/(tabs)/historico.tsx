@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
-import { ChevronRight, Clock, Eye, Repeat, Trash } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
 
 import { ActionSheet } from '@/components/ActionSheet';
 import { DemoNotice } from '@/components/DemoNotice';
+import { ChevronRight, Clock, Eye, Repeat, Trash } from '@/components/icons';
 import { AppText, Card, EmptyState, Notice, Screen, ScreenTitle } from '@/components/ui';
 import { useData, useQuery, useRepo } from '@/data/DataProvider';
 import { formatDate } from '@/domain/format';

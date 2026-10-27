@@ -9,6 +9,10 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 jest.mock('expo-crypto', () => ({ randomUUID: () => require('node:crypto').randomUUID() }));
+// o Jest não executa import() dinâmico sem flag experimental: carrega o catálogo direto
+jest.mock('@/data/catalog/loadBundledCatalog', () => ({
+  loadBundledCatalog: async () => require('@/data/catalog/localCatalog').getBundledCatalog(),
+}));
 
 const routes = {
   _layout: require('@/app/_layout').default,

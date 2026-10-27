@@ -1,11 +1,11 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { ListChecks, Pencil, Plus, Trash } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
 
 import { ActionSheet } from '@/components/ActionSheet';
 import { DemoNotice } from '@/components/DemoNotice';
+import { ListChecks, Pencil, Plus, Trash } from '@/components/icons';
 import { ListCard } from '@/components/product';
 import { AppText, Card, EmptyState, Field, Notice, PrimaryButton, Screen, ScreenTitle, SecondaryButton } from '@/components/ui';
 import { useData, useQuery, useRepo } from '@/data/DataProvider';

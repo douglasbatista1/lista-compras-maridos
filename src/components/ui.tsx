@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { Check, Info, Minus, Package, Plus, Search, X } from 'lucide-react-native';
 import { useState, type ComponentRef, type ReactNode, type Ref } from 'react';
 import {
   ActivityIndicator,
@@ -18,6 +17,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, fonts, radii, space, touch, type } from '@/theme/tokens';
+
+import { Check, Info, Minus, Package, Plus, Search, X } from './icons';
 
 // ---------------------------------------------------------------- Texto e tela
 
