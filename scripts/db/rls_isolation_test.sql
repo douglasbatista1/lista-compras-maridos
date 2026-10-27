@@ -268,5 +268,38 @@ do $$ begin
   end;
 end $$;
 
+-- ---------------------------------------------------------------- conta sem perfil consegue criar família
+\set n1 '''cccccccc-0000-0000-0000-000000000001'''
+reset role;
+alter table auth.users disable trigger on_auth_user_created;
+insert into auth.users (id, email, raw_user_meta_data) values (:n1, 'semperfil@teste.local', '{"display_name":"Sem Perfil"}');
+alter table auth.users enable trigger on_auth_user_created;
+set role authenticated;
+select set_config('request.jwt.claim.sub', :n1, false) \g /dev/null
+do $$ begin
+  assert public.create_family('Família sem perfil') is not null, 'FALHA: criar família sem perfil';
+  assert (select display_name from public.profiles where id = auth.uid()) = 'Sem Perfil', 'FALHA: perfil deveria ser criado';
+  assert public.is_app_admin() = false, 'FALHA: usuário comum não é admin';
+  assert (select count(*) from public.app_admins) = 0, 'FALHA: leu admins';
+  begin
+    insert into public.app_admins (user_id) values (auth.uid());
+    raise exception 'FALHA: usuário se tornou admin sozinho';
+  exception when others then if sqlerrm like 'FALHA:%' then raise; end if;
+  end;
+  begin
+    perform public.ensure_my_profile();
+    raise exception 'FALHA: ensure_my_profile não deveria ser chamável pela API';
+  exception when others then if sqlerrm like 'FALHA:%' then raise; end if;
+  end;
+end $$;
+
+reset role;
+insert into public.app_admins (user_id) values (:n1);
+set role authenticated;
+do $$ begin
+  assert public.is_app_admin() = true, 'FALHA: admin cadastrado';
+  assert (select count(*) from public.app_admins) = 1, 'FALHA: admin vê só a própria linha';
+end $$;
+
 reset role;
 select 'RLS: todos os cenários passaram' as resultado;

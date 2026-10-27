@@ -26,6 +26,7 @@ Migrações em `supabase/migrations/`:
 | `shopping_list_items` | família | `product_id` **ou** `family_product_id`, cópia de identificação do produto (*snapshot*), `quantity_requested`, `quantity_purchased`, status e `checked_at/by`. |
 | `purchases` | família | **Compra confirmada**: 1 por lista concluída. |
 | `purchase_items` | família | Itens efetivamente comprados, com snapshot e quantidade comprada. |
+| `app_admins` | produto | Administradores do app (equipe), não confundir com o responsável da família. Só se cadastra por SQL/painel; `is_app_admin()` diz se quem está logado é admin. |
 | `entitlements` | família | Licença futura (R$ 10, `family_lifetime`). Só o servidor escreve. |
 
 ## Regras de integridade
@@ -39,6 +40,7 @@ Migrações em `supabase/migrations/`:
 - **Lista simples** (`kind = 'simple'`): itens só com texto (`name_snapshot`) e quantidade, sem `product_id` nem foto. O mesmo texto (sem diferença de maiúsculas e acentos) soma a quantidade. "Comprar novamente" mantém o tipo.
 - **Enviar lista** (`send_shopping_list`): exige pelo menos 1 item; marca `sent_at`. Quem abre o app com uma lista enviada e não concluída cai direto nela.
 - **Limite da família**: responsável + até 5 pessoas (membros ativos + convites pendentes), verificado em `create_family_invite` e de novo em `accept_family_invite` (`family_invite_slots`). Convite com e-mail só é aceito pela conta com esse e-mail.
+- **Perfil garantido**: `create_family` e `accept_family_invite` criam o perfil se ele faltar (migration 0006), porque `family_members` depende dele.
 - `shopping_list_items.family_id` é sempre copiado da lista pelo trigger. O valor enviado pelo cliente é ignorado.
 
 ## Índices
