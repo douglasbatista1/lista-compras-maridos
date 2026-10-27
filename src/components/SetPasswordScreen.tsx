@@ -50,6 +50,12 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
       const { data } = await sb.auth.getUser();
       if (!alive) return;
       const code = link.inviteCode ?? (typeof params.code === 'string' && /^[A-Za-z0-9]{8}$/.test(params.code) ? params.code.toUpperCase() : null);
+      // Aberto sem link de e-mail (sem sessão nova e sem código de convite): não é um convite.
+      // Vai para o início, que leva ao login, à família ou às listas conforme o caso.
+      if (!link.accessToken && !(kind === 'invite' && code)) {
+        router.replace('/');
+        return;
+      }
       setInviteCode(code ?? (data.user?.user_metadata?.invite_code as string | undefined) ?? null);
       setName((data.user?.user_metadata?.display_name as string | undefined) ?? '');
       setStatus(data.user ? 'ready' : 'invalid');
@@ -57,7 +63,7 @@ export function SetPasswordScreen({ kind }: { kind: 'invite' | 'recovery' }) {
     return () => {
       alive = false;
     };
-  }, [sb, linkingUrl, params.code]);
+  }, [sb, linkingUrl, params.code, kind]);
 
   async function submit() {
     if (!sb) return;

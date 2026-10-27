@@ -23,6 +23,7 @@ const routes = {
   'produto-manual': require('@/app/produto-manual').default,
   'historico/[id]': require('@/app/historico/[id]').default,
   entrar: require('@/app/entrar').default,
+  cadastro: require('@/app/cadastro').default,
   'familia-inicial': require('@/app/familia-inicial').default,
 };
 
@@ -131,5 +132,12 @@ it('lista simples: escreve os itens, escolhe a quantidade e marca, sem busca nem
   expect(await screen.findByText('1 de 2 itens comprados')).toBeTruthy();
   // lista simples não tem o botão de buscar produtos no catálogo
   expect(screen.queryByRole('button', { name: 'Adicionar' })).toBeNull();
+  await act(async () => {});
+});
+
+it.each(['/entrar', '/cadastro'])('quem já está dentro e abre %s vai direto para as listas', async (url) => {
+  await renderRouter(routes, { initialUrl: url });
+  expect(await screen.findByRole('button', { name: 'Nova lista' })).toBeTruthy();
+  expect(screen.queryByText('Criar conta')).toBeNull();
   await act(async () => {});
 });

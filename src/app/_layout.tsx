@@ -5,7 +5,7 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { Stack } from 'expo-router';
+import { Stack, router, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -61,32 +61,56 @@ function Gate() {
 
   const ready = state.status === 'ready';
   return (
-    <Stack
-      screenOptions={{
-        headerShadowVisible: false,
-        headerStyle: { backgroundColor: colors.ivory },
-        headerTintColor: colors.forest,
-        headerTitleStyle: { fontFamily: fonts.semibold, color: colors.ink },
-        headerBackButtonDisplayMode: 'minimal',
-        contentStyle: { backgroundColor: colors.ivory },
-      }}>
-      <Stack.Protected guard={ready}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="lista/nova" options={{ title: 'Nova lista', presentation: 'modal' }} />
-        <Stack.Screen name="lista/[id]/index" options={{ title: '' }} />
-        <Stack.Screen name="lista/[id]/adicionar" options={{ title: 'Adicionar produtos' }} />
-        <Stack.Screen name="produto-manual" options={{ title: 'Cadastrar produto', presentation: 'modal' }} />
-        <Stack.Screen name="historico/[id]" options={{ title: 'Compra' }} />
-      </Stack.Protected>
-      <Stack.Protected guard={state.status === 'needs-auth'}>
-        <Stack.Screen name="entrar" options={{ headerShown: false }} />
-      </Stack.Protected>
-      <Stack.Protected guard={state.status === 'needs-family'}>
-        <Stack.Screen name="familia-inicial" options={{ headerShown: false }} />
-      </Stack.Protected>
-      {/* links de e-mail: abrem em qualquer estado (com ou sem login) */}
-      <Stack.Screen name="convite" options={{ headerShown: false }} />
-      <Stack.Screen name="redefinir-senha" options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <RouteGuard status={state.status} />
+      <Stack
+        screenOptions={{
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: colors.ivory },
+          headerTintColor: colors.forest,
+          headerTitleStyle: { fontFamily: fonts.semibold, color: colors.ink },
+          headerBackButtonDisplayMode: 'minimal',
+          contentStyle: { backgroundColor: colors.ivory },
+        }}>
+        <Stack.Protected guard={ready}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="lista/nova" options={{ title: 'Nova lista', presentation: 'modal' }} />
+          <Stack.Screen name="lista/[id]/index" options={{ title: '' }} />
+          <Stack.Screen name="lista/[id]/adicionar" options={{ title: 'Adicionar produtos' }} />
+          <Stack.Screen name="produto-manual" options={{ title: 'Cadastrar produto', presentation: 'modal' }} />
+          <Stack.Screen name="historico/[id]" options={{ title: 'Compra' }} />
+        </Stack.Protected>
+        <Stack.Protected guard={state.status === 'needs-auth'}>
+          <Stack.Screen name="entrar" options={{ headerShown: false }} />
+          <Stack.Screen name="cadastro" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={state.status === 'needs-family'}>
+          <Stack.Screen name="familia-inicial" options={{ headerShown: false }} />
+        </Stack.Protected>
+        {/* links de e-mail: abrem em qualquer estado (com ou sem login) */}
+        <Stack.Screen name="convite" options={{ headerShown: false }} />
+        <Stack.Screen name="redefinir-senha" options={{ headerShown: false }} />
+      </Stack>
+    </>
   );
+}
+
+/** Telas abertas por link de e-mail: elas mesmas decidem para onde ir depois. */
+const EMAIL_LINK_ROUTES = new Set(['convite', 'redefinir-senha']);
+
+/**
+ * Direcionamento explícito pelo estado da sessão, para nunca cair numa tela "sobrando"
+ * (ex.: /convite sem link de convite):
+ * sem login → /entrar (ou /cadastro) · logado sem família → /familia-inicial · pronto → listas.
+ */
+function RouteGuard({ status }: { status: 'ready' | 'needs-auth' | 'needs-family' }) {
+  const segments = useSegments();
+  const first: string = segments[0] ?? '';
+  useEffect(() => {
+    if (EMAIL_LINK_ROUTES.has(first)) return;
+    if (status === 'needs-auth' && first !== 'entrar' && first !== 'cadastro') router.replace('/entrar');
+    else if (status === 'needs-family' && first !== 'familia-inicial') router.replace('/familia-inicial');
+    else if (status === 'ready' && (first === 'entrar' || first === 'cadastro' || first === 'familia-inicial')) router.replace('/');
+  }, [status, first]);
+  return null;
 }
