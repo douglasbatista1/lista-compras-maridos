@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import { Bell, LogOut, UserPlus, Users } from 'lucide-react-native';
+import { BadgeCheck, Bell, LogOut, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -8,6 +8,7 @@ import { FamilyPeople } from '@/components/FamilyPeople';
 import { AppText, Card, Field, Screen, ScreenTitle, SecondaryButton, SectionTitle } from '@/components/ui';
 import { useData, useQuery, useRepo } from '@/data/DataProvider';
 import { SupabaseRepository } from '@/data/supabase/supabaseRepository';
+import { ACCESS_LABEL } from '@/domain/access';
 import { MAX_INVITED_PEOPLE } from '@/domain/auth';
 import { formatDate } from '@/domain/format';
 import { MIN_PURCHASES, estimateReplenishment } from '@/domain/replenishment';
@@ -30,6 +31,7 @@ export default function FamilyScreen() {
     members: await r.listMembers(),
     purchases: await r.listPurchases(),
     displayName: await r.getDisplayName(),
+    access: r instanceof SupabaseRepository ? await r.getAccess() : null,
   }));
   const [nameDraft, setNameDraft] = useState<string | null>(null);
   const [savingName, setSavingName] = useState(false);
@@ -93,6 +95,22 @@ export default function FamilyScreen() {
         </>
       )}
 
+      {data?.access ? (
+        <>
+          <SectionTitle>Acesso da família</SectionTitle>
+          <Card>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.sm }}>
+              <BadgeCheck size={20} color={colors.forest} />
+              <AppText variant="bodyStrong" style={{ flex: 1 }}>
+                Situação
+              </AppText>
+              <Badge>{ACCESS_LABEL[data.access].badge}</Badge>
+            </View>
+            <AppText variant="meta">{ACCESS_LABEL[data.access].text}</AppText>
+          </Card>
+        </>
+      ) : null}
+
       <SectionTitle>Reposição (experimental)</SectionTitle>
       <Card>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, marginBottom: space.sm }}>
@@ -122,6 +140,11 @@ export default function FamilyScreen() {
         <>
           <SectionTitle>Conta</SectionTitle>
           <SecondaryButton label="Sair" icon={<LogOut size={18} color={colors.forest} />} onPress={signOut} />
+          <Link href="/excluir-conta" style={{ marginTop: space.md, alignSelf: 'center', paddingVertical: space.sm }}>
+            <AppText variant="metaStrong" style={{ color: colors.error }}>
+              Excluir minha conta
+            </AppText>
+          </Link>
         </>
       ) : null}
 
@@ -141,11 +164,18 @@ export default function FamilyScreen() {
         <AppText variant="meta" style={{ marginTop: space.sm }}>
           O app não usa sua localização.
         </AppText>
-        <Link href="/privacidade" style={{ marginTop: space.md, paddingVertical: space.xs }}>
-          <AppText variant="metaStrong" style={{ textDecorationLine: 'underline' }}>
-            Política de Privacidade
-          </AppText>
-        </Link>
+        <View style={{ marginTop: space.md, flexDirection: 'row', gap: space.lg }}>
+          <Link href="/privacidade" style={{ paddingVertical: space.xs }}>
+            <AppText variant="metaStrong" style={{ textDecorationLine: 'underline' }}>
+              Política de Privacidade
+            </AppText>
+          </Link>
+          <Link href="/termos" style={{ paddingVertical: space.xs }}>
+            <AppText variant="metaStrong" style={{ textDecorationLine: 'underline' }}>
+              Termos de Uso
+            </AppText>
+          </Link>
+        </View>
       </Card>
     </Screen>
   );

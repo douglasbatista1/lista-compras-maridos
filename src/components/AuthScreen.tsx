@@ -242,11 +242,18 @@ export function AuthScreen({ initialMode = 'entrar' }: { initialMode?: 'entrar' 
           />
         </>
       ) : null}
-      <Link href="/privacidade" style={{ marginTop: space.xl, alignSelf: 'center', paddingVertical: space.sm }}>
-        <AppText variant="meta" style={{ textDecorationLine: 'underline' }}>
-          Política de Privacidade
-        </AppText>
-      </Link>
+      <View style={{ marginTop: space.xl, flexDirection: 'row', justifyContent: 'center', gap: space.lg }}>
+        <Link href="/termos" style={{ paddingVertical: space.sm }}>
+          <AppText variant="meta" style={{ textDecorationLine: 'underline' }}>
+            Termos de Uso
+          </AppText>
+        </Link>
+        <Link href="/privacidade" style={{ paddingVertical: space.sm }}>
+          <AppText variant="meta" style={{ textDecorationLine: 'underline' }}>
+            Política de Privacidade
+          </AppText>
+        </Link>
+      </View>
     </Screen>
   );
 }

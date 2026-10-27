@@ -79,6 +79,7 @@ function Gate() {
           <Stack.Screen name="lista/[id]/adicionar" options={{ title: 'Adicionar produtos' }} />
           <Stack.Screen name="produto-manual" options={{ title: 'Cadastrar produto', presentation: 'modal' }} />
           <Stack.Screen name="historico/[id]" options={{ title: 'Compra' }} />
+          <Stack.Screen name="excluir-conta" options={{ title: 'Excluir conta' }} />
         </Stack.Protected>
         <Stack.Protected guard={state.status === 'needs-auth'}>
           <Stack.Screen name="entrar" options={{ headerShown: false }} />
@@ -92,6 +93,7 @@ function Gate() {
         <Stack.Screen name="redefinir-senha" options={{ headerShown: false }} />
         {/* páginas públicas (exigidas pelas lojas) */}
         <Stack.Screen name="privacidade" options={{ title: 'Política de Privacidade' }} />
+        <Stack.Screen name="termos" options={{ title: 'Termos de Uso' }} />
       </Stack>
     </>
   );
@@ -101,7 +103,7 @@ function Gate() {
  * Telas que o direcionamento não mexe: links de e-mail (decidem sozinhas para onde ir)
  * e páginas públicas, que abrem com ou sem login.
  */
-const FREE_ROUTES = new Set(['convite', 'redefinir-senha', 'privacidade']);
+const FREE_ROUTES = new Set(['convite', 'redefinir-senha', 'privacidade', 'termos']);
 
 /**
  * Direcionamento explícito pelo estado da sessão, para nunca cair numa tela "sobrando"

@@ -9,14 +9,14 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#F7F5F0",
     "ios": {
-      "bundleIdentifier": "com.placeholder.listacomprasmaridos",
+      "bundleIdentifier": "com.douglasbatista.listacomprasmaridos",
       "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.placeholder.listacomprasmaridos",
+      "package": "com.douglasbatista.listacomprasmaridos",
       "adaptiveIcon": {
         "backgroundColor": "#203832",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

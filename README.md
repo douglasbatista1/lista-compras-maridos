@@ -9,7 +9,9 @@ App Android/iOS (Expo + React Native + TypeScript) para montar a lista da casa c
 - **Modo demonstração** funciona sem nenhuma conta, com dados só no aparelho.
 - **Modo Supabase** (contas, família e sincronização) é ativado por variáveis de ambiente.
 
-Documentação: [inventário](docs/project-inventory.md) · [arquitetura](docs/architecture.md) · [modelo de dados](docs/data-model.md) · [segurança e privacidade](docs/security-and-privacy.md) · [importação do catálogo](docs/catalog-import.md) · [roadmap](docs/roadmap.md)
+Documentação: [inventário](docs/project-inventory.md) · [arquitetura](docs/architecture.md) · [modelo de dados](docs/data-model.md) · [segurança e privacidade](docs/security-and-privacy.md) · [importação do catálogo](docs/catalog-import.md) · [App Store](docs/app-store.md) · [cobrança](docs/billing.md) · [roadmap](docs/roadmap.md)
+
+**Usar no iPhone hoje, sem conta Apple paga:** abra https://lista-compras-maridos.vercel.app no Safari → *Compartilhar* → *Adicionar à Tela de Início*.
 
 ## Pré-requisitos
 - Node.js 20+ (testado com 26.5) e npm
@@ -44,7 +46,7 @@ Sem essas duas variáveis, o app roda em **modo demonstração**. **Nunca** colo
 2. Aplique as migrações. Escolha uma opção:
    - CLI: `npx supabase login`, depois `npx supabase link --project-ref <ref>`, depois `npx supabase db push`
    - ou cole no SQL Editor os arquivos de `supabase/migrations/`, em ordem.
-3. **Authentication → Providers → Email**: deixe ligado, com "Confirm email" ativo. Em *Password*, mínimo de 8 caracteres.
+3. **Authentication → Providers → Email**: deixe ligado. Em *Password*, mínimo de 8 caracteres. ("Confirm email" está desligado neste projeto: a conta já entra ao se cadastrar.)
 4. **Authentication → URL Configuration**:
    - **Site URL:** `https://lista-compras-maridos.vercel.app`
    - **Redirect URLs:** `https://lista-compras-maridos.vercel.app/**`, `listacompras://**` (app instalado), `exp://**` (Expo Go) e `http://localhost:8081/**` (web local).
@@ -61,6 +63,7 @@ Sem essas duas variáveis, o app roda em **modo demonstração**. **Nunca** colo
    ```
    A função usa as variáveis padrão do Supabase (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`). A chave secreta fica só no servidor.
    Sem a função publicada, o app cria o convite mesmo assim e mostra o código para você enviar à pessoa.
+   Publique também `delete-account` (exclusão de conta, exigida pela Apple) e `revenuecat-webhook` (com `--no-verify-jwt`; ver [docs/billing.md](docs/billing.md)).
 9. Preencha o `.env` com a URL e a chave **publishable** (Settings → API).
 10. Importe o catálogo seguindo [docs/catalog-import.md](docs/catalog-import.md). A importação usa `.env.import.local` com a `service_role`, só na sua máquina.
 11. Rode `npm start`. Crie a conta (e-mail e senha), crie a família e convide pessoas na aba **Família**.
@@ -99,8 +102,10 @@ eas build --platform android --profile production
 eas build --platform ios --profile production
 eas submit --platform android  # / ios — envio às lojas
 ```
-**Antes da primeira build de loja:**
-- troque `com.placeholder.listacomprasmaridos` (em `app.json`, `ios.bundleIdentifier` e `android.package`) pelo identificador definitivo; ele não pode mudar depois;
+O perfil `ios-simulator` gera um app para o Simulador do Mac **sem** conta Apple paga.
+
+**Antes da primeira build de loja** (passo a passo em [docs/app-store.md](docs/app-store.md)):
+- identificador definitivo: `com.douglasbatista.listacomprasmaridos` (iOS e Android); ele não pode mudar depois da primeira publicação;
 - **iOS**: conta Apple Developer (anual), app criado no App Store Connect; certificados e perfis podem ser gerados pelo EAS;
 - **Android**: conta Google Play Console (taxa única), app criado no console, chave de serviço para `eas submit`; o primeiro envio costuma ser manual;
 - metadados, capturas de tela, política de privacidade (URL) e o questionário de segurança de dados das lojas.
@@ -126,6 +131,6 @@ Os valores mudam; confira as páginas de preço antes de depender deles.
 - O modo Supabase (repositório, login, convite, Realtime) foi implementado, e o SQL foi testado num Postgres local, mas **ainda não rodou contra um projeto Supabase real**.
 - Fotos com licença desconhecida, servidas pelo CDN de origem no modo demonstração.
 - O modo Supabase ainda não tem fila offline (ele mostra o erro e desfaz a alteração).
-- O convite no modo local é **demonstrativo**. O pagamento (R$ 10 por família) está planejado e não aparece no app.
+- O convite no modo local é **demonstrativo**. A cobrança (R$ 10 por família, via RevenueCat) tem a base pronta no servidor, mas não está ativa: veja [docs/billing.md](docs/billing.md).
 - O convite por e-mail foi implementado e testado com Supabase simulado e Postgres local. **O envio real do e-mail e o retorno do link para o app ainda não foram verificados**: dependem do projeto Supabase, do provedor de e-mail e do domínio.
 - O app não usa localização.

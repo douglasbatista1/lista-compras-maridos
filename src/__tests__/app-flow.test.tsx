@@ -25,6 +25,8 @@ const routes = {
   entrar: require('@/app/entrar').default,
   cadastro: require('@/app/cadastro').default,
   privacidade: require('@/app/privacidade').default,
+  termos: require('@/app/termos').default,
+  'excluir-conta': require('@/app/excluir-conta').default,
   'familia-inicial': require('@/app/familia-inicial').default,
 };
 
@@ -147,7 +149,23 @@ it('a Política de Privacidade abre sem ser redirecionada e é acessível pela a
   await renderRouter(routes, { initialUrl: '/privacidade' });
   expect(await screen.findByText('Seus direitos')).toBeTruthy();
   expect(screen.getByText(/Supabase — banco de dados/)).toBeTruthy();
+  expect(screen.getByText(/mantido por Douglas Batista/)).toBeTruthy();
+  expect(screen.queryByText(/a definir/)).toBeNull();
   await act(async () => router.navigate('/familia'));
   expect(await screen.findByText('Política de Privacidade')).toBeTruthy();
+  expect(screen.getByText('Termos de Uso')).toBeTruthy();
+  await act(async () => {});
+});
+
+it('os Termos de Uso abrem sem login e apontam para a privacidade', async () => {
+  await renderRouter(routes, { initialUrl: '/termos' });
+  expect(await screen.findByText('Excluir a conta')).toBeTruthy();
+  expect(screen.getByText('Política de Privacidade')).toBeTruthy();
+  await act(async () => {});
+});
+
+it('no modo demonstração a exclusão de conta explica que não há conta', async () => {
+  await renderRouter(routes, { initialUrl: '/excluir-conta' });
+  expect(await screen.findByText(/não há conta/)).toBeTruthy();
   await act(async () => {});
 });

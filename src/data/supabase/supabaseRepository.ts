@@ -1,6 +1,7 @@
 import { FunctionsHttpError, type SupabaseClient } from '@supabase/supabase-js';
 
-import { normalizeEmail } from '@/domain/auth';
+import { type EntitlementRow, type FamilyAccess, familyAccess } from '@/domain/access';
+import { DELETE_CONFIRMATION, normalizeEmail } from '@/domain/auth';
 import { normalizeText } from '@/domain/search';
 import type {
   AnyProduct,
@@ -489,6 +490,27 @@ export class SupabaseRepository implements DataRepository {
       .eq('family_id', this.familyId)
       .eq('user_id', userId);
     fail(error);
+  }
+
+  /** Situação do acesso da família (só leitura; quem grava é o webhook da loja). */
+  async getAccess(): Promise<FamilyAccess> {
+    const { data, error } = await this.sb.from('entitlements').select('status, provider').eq('family_id', this.familyId);
+    fail(error);
+    return familyAccess((data ?? []) as EntitlementRow[]);
+  }
+
+  /**
+   * Exclui a conta de quem está logado (Edge Function delete-account). Depois disso a sessão
+   * local precisa ser encerrada por quem chamou.
+   */
+  async deleteAccount(): Promise<void> {
+    const { error } = await this.sb.functions.invoke('delete-account', { body: { confirm: DELETE_CONFIRMATION } });
+    if (!error) return;
+    if (error instanceof FunctionsHttpError) {
+      const payload = await error.context.json().catch(() => null);
+      throw new Error(payload?.error ?? 'Não foi possível excluir a conta.');
+    }
+    throw new Error('Sem conexão com o servidor. Verifique a internet e tente de novo.');
   }
 
   /** Atualização em tempo real: recarrega quando outro membro altera a lista. */

@@ -62,3 +62,5 @@ O mesmo SQL pode rodar num Supabase local (`supabase start`) depois de criar usu
 
 ## Imagens do catálogo
 As fotos têm **licença desconhecida** (`products.image_license = 'desconhecida'`). No modo demonstração, o app carrega as fotos do CDN de origem. Antes de distribuir comercialmente, é preciso obter autorização ou trocar por fotos próprias ou licenciadas.
+- **Exclusão de conta** (Família → Excluir minha conta): a Edge Function `delete-account` só apaga a conta dona do JWT, chama `delete_account_data` (service_role: passa a responsabilidade para quem entrou primeiro ou apaga a família de uma pessoa só) e apaga o login. Listas e compras ficam com a família, sem autor.
+- **Webhook da loja** (`revenuecat-webhook`): sem JWT, mas exige o segredo `REVENUECAT_WEBHOOK_SECRET` no cabeçalho Authorization (comparação em tempo constante); sem o segredo configurado responde 503.

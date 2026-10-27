@@ -66,3 +66,18 @@ export function authErrorMessage(error: { message?: string; code?: string } | nu
   if (code === 'over_email_send_rate_limit' || /rate limit/i.test(msg)) return 'Muitos e-mails enviados. Aguarde alguns minutos e tente de novo.';
   return msg || 'Não foi possível concluir. Tente de novo.';
 }
+
+/** Palavra que a pessoa digita para confirmar a exclusão da conta (também conferida no servidor). */
+export const DELETE_CONFIRMATION = 'EXCLUIR';
+
+export type DeletionImpact = 'delete-family' | 'transfer-ownership' | 'leave-family';
+
+/**
+ * O que acontece com a família quando a pessoa exclui a conta (mesma regra de
+ * delete_account_data no banco): sozinha → a família é apagada; responsável com outras
+ * pessoas → quem entrou primeiro assume; membro → só sai da família.
+ */
+export function accountDeletionImpact(role: 'owner' | 'member', activeMembers: number): DeletionImpact {
+  if (activeMembers <= 1) return 'delete-family';
+  return role === 'owner' ? 'transfer-ownership' : 'leave-family';
+}

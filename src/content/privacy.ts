@@ -3,20 +3,20 @@
  * Escrita a partir do que o app realmente faz em 27/10/2026. Ao mudar a coleta ou o uso de
  * dados (ex.: pagamentos, análises, ofertas por localização), atualize este texto e a data.
  *
- * PENDENTE antes de publicar na loja: preencher CONTROLLER e revisar com um profissional.
+ * Recomendado antes de vender: revisar com um profissional (e trocar pelo CNPJ, se abrir empresa).
  */
 export const CONTROLLER = {
   /** Nome da pessoa ou razão social responsável pelo app (e CNPJ, se houver). */
-  name: '[a definir: nome ou razão social do responsável]',
+  name: 'Douglas Batista',
   /** E-mail para pedidos de privacidade (direitos do titular). */
-  email: '[a definir: e-mail de contato]',
+  email: 'douglasbtmr@gmail.com',
 };
 
 export const PRIVACY_UPDATED_AT = '27 de outubro de 2026';
 
-export type PrivacySection = { title: string; paragraphs: string[] };
+export type LegalSection = { title: string; paragraphs: string[] };
 
-export const PRIVACY_SECTIONS: PrivacySection[] = [
+export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     title: 'Quem somos',
     paragraphs: [
@@ -32,7 +32,8 @@ export const PRIVACY_SECTIONS: PrivacySection[] = [
       'Convites: o nome e o e-mail das pessoas que o responsável convida, usados apenas para enviar o convite e permitir que somente aquele e-mail aceite.',
       'Listas e compras: as listas que você cria, os produtos escolhidos (do catálogo ou cadastrados pela família), as quantidades, os itens marcados como comprados, as compras concluídas e as respectivas datas.',
       'Dados técnicos: registros de acesso gerados automaticamente pelos nossos provedores de infraestrutura (como endereço IP, data e hora), usados para segurança e para corrigir falhas.',
-      'Não coletamos sua localização, seus contatos, fotos ou dados de pagamento. Não usamos ferramentas de publicidade nem rastreamento de terceiros.',
+      'Compra do acesso (quando a cobrança estiver ativa): a loja (App Store ou Google Play) nos informa, por meio da RevenueCat, apenas que a compra foi feita, qual produto, a data e a situação (ativa, reembolsada). Não recebemos número de cartão nem outros dados de pagamento.',
+      'Não coletamos sua localização, seus contatos ou fotos. Não usamos ferramentas de publicidade nem rastreamento de terceiros.',
     ],
   },
   {
@@ -60,6 +61,7 @@ export const PRIVACY_SECTIONS: PrivacySection[] = [
       'Vercel — hospedagem do site do app.',
       'Provedor de envio de e-mails — envio de convites e e-mails de acesso.',
       'Apple e Google — distribuição do app e, quando houver, processamento de pagamentos nas lojas. Os dados de pagamento ficam com as lojas; não temos acesso a eles.',
+      'RevenueCat — confirma com as lojas as compras do acesso e nos avisa quando uma família comprou ou foi reembolsada. Recebe o identificador da sua conta no app, nunca seu nome ou e-mail.',
       'Alguns desses fornecedores podem tratar dados fora do Brasil, com as garantias previstas na LGPD para transferência internacional.',
     ],
   },
@@ -67,8 +69,10 @@ export const PRIVACY_SECTIONS: PrivacySection[] = [
     title: 'Por quanto tempo guardamos',
     paragraphs: [
       'Enquanto sua conta existir. Os dados da família ficam disponíveis enquanto a família existir.',
-      'Ao excluir uma lista concluída do seu histórico, ela deixa de aparecer para você, mas continua no histórico da família e em nossos registros de compras. Ela é apagada quando a conta ou a família é excluída.',
-      'Quando você pedir a exclusão da conta, apagamos ou anonimizamos seus dados pessoais, exceto o que a lei nos obrigar a guardar.',
+      'Ao excluir uma lista concluída do seu histórico, ela deixa de aparecer para você, mas continua no histórico da família e em nossos registros de compras. Ela só é apagada quando a família é excluída.',
+      'Você pode excluir sua conta a qualquer momento no próprio app, em Família → Excluir minha conta. Apagamos seu login, nome e e-mail e tiramos você da família. As listas e compras continuam com a família, sem o seu nome. Se você for a única pessoa da família, a família inteira e todos os dados dela são apagados.',
+      'Se você for o responsável e houver outras pessoas na família, a pessoa que entrou primeiro passa a ser a responsável.',
+      'Guardamos apenas o que a lei nos obrigar (por exemplo, registros de compra exigidos para fins fiscais).',
     ],
   },
   {

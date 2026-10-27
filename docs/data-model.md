@@ -27,7 +27,7 @@ Migrações em `supabase/migrations/`:
 | `purchases` | família | **Compra confirmada**: 1 por lista concluída. |
 | `purchase_items` | família | Itens efetivamente comprados, com snapshot e quantidade comprada. |
 | `app_admins` | produto | Administradores do app (equipe), não confundir com o responsável da família. Só se cadastra por SQL/painel; `is_app_admin()` diz se quem está logado é admin. |
-| `entitlements` | família | Licença futura (R$ 10, `family_lifetime`). Só o servidor escreve. |
+| `entitlements` | família | Acesso da família (R$ 10, `family_lifetime`; `provider` = `revenuecat` ou `courtesy`). Só o servidor escreve (webhook `revenuecat-webhook` → `apply_store_event`). |
 
 ## Regras de integridade
 - **Snapshot**: o item guarda nome, marca, variante, tamanho, categoria e foto do momento em que foi adicionado. Mudanças no catálogo não reescrevem o histórico.

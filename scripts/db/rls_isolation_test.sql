@@ -301,5 +301,94 @@ do $$ begin
   assert (select count(*) from public.app_admins) = 1, 'FALHA: admin vê só a própria linha';
 end $$;
 
+-- ---------------------------------------------------------------- exclusão de conta
+-- só a Edge Function (service_role) pode chamar delete_account_data
+do $$ begin
+  begin
+    perform public.delete_account_data(auth.uid());
+    raise exception 'FALHA: usuário comum chamou delete_account_data';
+  exception when others then if sqlerrm like 'FALHA:%' then raise; end if;
+  end;
+end $$;
+
+-- A1 (responsável, com outras pessoas) exclui a conta: a família continua e quem entrou primeiro assume
+reset role;
+insert into ctx select 'listsA', count(*)::text from public.shopping_lists where family_id = (select v::uuid from ctx where k = 'famA');
+set role service_role;
+select public.delete_account_data(:a1);
+reset role;
+delete from auth.users where id = :a1;
+do $$ begin
+  assert exists (select 1 from public.families where id = (select v::uuid from ctx where k = 'famA')), 'FALHA: família A não deveria ser apagada';
+  assert (select count(*) from public.family_members where family_id = (select v::uuid from ctx where k = 'famA') and role = 'owner' and status = 'active') = 1,
+    'FALHA: família A deveria ter exatamente um responsável';
+  assert (select user_id from public.family_members where family_id = (select v::uuid from ctx where k = 'famA') and role = 'owner')
+    = 'aaaaaaaa-0000-0000-0000-000000000002', 'FALHA: quem entrou primeiro (A2) deveria assumir';
+  assert (select count(*)::text from public.shopping_lists where family_id = (select v::uuid from ctx where k = 'famA')) = (select v from ctx where k = 'listsA'),
+    'FALHA: listas da família A deveriam continuar';
+  assert (select count(*) from public.purchases where family_id = (select v::uuid from ctx where k = 'famA')) = 1, 'FALHA: compra de A deveria continuar';
+  assert not exists (select 1 from public.profiles where id = 'aaaaaaaa-0000-0000-0000-000000000001'), 'FALHA: perfil de A1 deveria sumir';
+  assert not exists (select 1 from public.shopping_lists where created_by = 'aaaaaaaa-0000-0000-0000-000000000001'), 'FALHA: autoria de A1 deveria sumir';
+end $$;
+
+-- B1 (única pessoa da família B, com compra registrada) exclui a conta: a família inteira é apagada
+insert into public.purchases (family_id, list_id) values ((select v::uuid from ctx where k = 'famB'), (select v::uuid from ctx where k = 'listB'));
+set role service_role;
+select public.delete_account_data(:b1);
+reset role;
+delete from auth.users where id = :b1;
+do $$ begin
+  assert not exists (select 1 from public.families where id = (select v::uuid from ctx where k = 'famB')), 'FALHA: família B deveria ser apagada';
+  assert not exists (select 1 from public.shopping_lists where family_id = (select v::uuid from ctx where k = 'famB')), 'FALHA: listas de B deveriam sumir';
+  assert not exists (select 1 from public.purchases where family_id = (select v::uuid from ctx where k = 'famB')), 'FALHA: compras de B deveriam sumir';
+end $$;
+
+-- ---------------------------------------------------------------- compra pela loja (webhook RevenueCat)
+set role authenticated;
+select set_config('request.jwt.claim.sub', :f1, false) \g /dev/null
+do $$ begin
+  begin
+    perform public.apply_store_event(auth.uid(), 'active', 'ev', now(), 'APP_STORE', 'acesso', 'tx');
+    raise exception 'FALHA: usuário comum liberou o próprio acesso';
+  exception when others then if sqlerrm like 'FALHA:%' then raise; end if;
+  end;
+  assert (select count(*) from public.entitlements) = 0, 'FALHA: família A ainda não comprou';
+end $$;
+
+reset role;
+set role service_role;
+select public.apply_store_event(:f1, 'active', 'ev1', '2026-10-27 10:00+00', 'APP_STORE', 'acesso_familia', 'tx1') is not null as filho_comprou;
+select public.apply_store_event(:f1, 'active', 'ev1', '2026-10-27 10:00+00', 'APP_STORE', 'acesso_familia', 'tx1') is not null as repetido;
+-- reembolso atrasado (anterior à compra) não tira o acesso
+select public.apply_store_event(:f1, 'refunded', 'ev0', '2026-10-27 09:00+00', 'APP_STORE', 'acesso_familia', 'tx1') is not null;
+reset role;
+set role authenticated;
+select set_config('request.jwt.claim.sub', :a2, false) \g /dev/null
+do $$ begin
+  assert (select count(*) from public.entitlements) = 1, 'FALHA: A2 deveria ver a compra da família (uma linha)';
+  assert (select status from public.entitlements) = 'active', 'FALHA: evento atrasado desfez a compra';
+end $$;
+select set_config('request.jwt.claim.sub', :n1, false) \g /dev/null
+do $$ begin
+  assert (select count(*) from public.entitlements) = 0, 'FALHA: outra família viu a compra de A';
+end $$;
+
+reset role;
+set role service_role;
+select public.apply_store_event(:f1, 'refunded', 'ev2', '2026-10-28 10:00+00', 'APP_STORE', 'acesso_familia', 'tx1') is not null;
+-- conta sem família: nada a liberar
+select public.apply_store_event(gen_random_uuid(), 'active', 'ev3', now(), 'APP_STORE', 'acesso_familia', 'tx3') is null as sem_familia;
+reset role;
+-- cortesia (família do dono do app) não é afetada por eventos da loja
+insert into public.entitlements (family_id, status, provider, price_cents, granted_at)
+  values (public.primary_family_of(:n1), 'active', 'courtesy', 0, now());
+set role service_role;
+select public.apply_store_event(:n1, 'refunded', 'ev4', now(), 'APP_STORE', 'acesso_familia', 'tx4') is not null;
+reset role;
+do $$ begin
+  assert (select status from public.entitlements where family_id = (select v::uuid from ctx where k = 'famA')) = 'refunded', 'FALHA: reembolso';
+  assert (select status from public.entitlements where provider = 'courtesy') = 'active', 'FALHA: cortesia foi alterada pela loja';
+end $$;
+
 reset role;
 select 'RLS: todos os cenários passaram' as resultado;

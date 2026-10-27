@@ -40,4 +40,4 @@ Se alguém colocar uma chave `service_role` no app por engano, `src/config/env.t
 ## Build e distribuição
 - **Nativo**: EAS Build (`eas.json`, perfis `development`, `preview` e `production`). Ver o README.
 - **Web** (opcional, só para demonstração): `npm run export:web` gera `dist/` como SPA (`web.output: "single"`, com `public/_redirects`). O `netlify.toml` está pronto, mas **não foi publicado**.
-- Identificadores `com.placeholder.listacomprasmaridos` são **provisórios**. Defina o definitivo antes da primeira build de loja, porque ele não pode mudar depois.
+- Identificador do app: `com.douglasbatista.listacomprasmaridos` (iOS e Android). Não pode mudar depois da primeira publicação nas lojas.
